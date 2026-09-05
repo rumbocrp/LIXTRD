@@ -1,0 +1,20 @@
+[
+  {
+    "trade_id": "trade-oro-001",
+    "symbol": "XAUUSD",
+    "direction": "BUY",
+    "setup_id": "GOLD_DXY_MACRO_REVERSION",
+    "strategy_version": "v1.0",
+    "entry_price": 2050.40,
+    "stop_loss_price": 2042.00,
+    "take_profit_price": 2075.00,
+    "entry_timestamp_utc": 1788380000000,
+    "exit_price": 2075.00,
+    "exit_timestamp_utc": 1788381800000,
+    "pnl_usd": 2460.00,
+    "commission_usd": 7.00,
+    "slippage_pips": 0.15,
+    "market_regime_tag": "NORMAL",
+    "operator_notes": "Entrada por desacople DXY + confluencia OFI"
+  }
+]

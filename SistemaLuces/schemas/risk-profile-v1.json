@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/risk-profile-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "max_risk_per_trade_usd_cents",
+    "max_daily_loss_usd_cents",
+    "max_daily_drawdown_usd_cents",
+    "max_consecutive_losses",
+    "max_daily_openings",
+    "max_concurrent_positions",
+    "max_reference_lots",
+    "stale_threshold_ms",
+    "news_blackout_minutes",
+    "kill_switch_active"
+  ],
+  "properties": {
+    "profile_version": { "type": "string" },
+    "max_risk_per_trade_usd_cents": { "type": "integer", "minimum": 1 },
+    "max_daily_loss_usd_cents": { "type": "integer", "minimum": 1 },
+    "max_daily_drawdown_usd_cents": { "type": "integer", "minimum": 1 },
+    "max_consecutive_losses": { "type": "integer", "minimum": 1 },
+    "max_daily_openings": { "type": "integer", "minimum": 1 },
+    "max_concurrent_positions": { "type": "integer", "minimum": 1 },
+    "max_reference_lots": { "type": "integer", "minimum": 1 },
+    "stale_threshold_ms": { "type": "integer", "minimum": 1 },
+    "news_blackout_minutes": { "type": "integer", "minimum": 1 },
+    "kill_switch_active": { "type": "boolean" }
+  }
+}

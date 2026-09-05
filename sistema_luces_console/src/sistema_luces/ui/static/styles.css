@@ -1,0 +1,481 @@
+/**
+ * SISTEMA DE LUCES 2.0 - ESTÁNDAR DE DISEÑO INDUSTRIAL & ANTI-AI SLOP
+ * 3-Tier Token Architecture | 4-Point Grid | Hardware Optical Bezel | Tabular Numbers
+ */
+
+:root {
+  /* TIER 1: PRIMITIVAS (Obsidian & Signal Hex) */
+  --obsidian-950: #09090b;
+  --obsidian-900: #111113;
+  --obsidian-850: #161619;
+  --obsidian-800: #1e1e24;
+  --obsidian-700: #242429;
+  --obsidian-600: #323238;
+  --obsidian-500: #52525b;
+
+  --emerald-600: #06281e;
+  --emerald-500: #10b981;
+  --emerald-400: #34d399;
+
+  --amber-600: #2c1b04;
+  --amber-500: #f59e0b;
+  --amber-400: #fbbf24;
+
+  --ruby-600: #2e0b11;
+  --ruby-500: #ef4444;
+  --ruby-400: #f87171;
+
+  --text-primary: #ededef;
+  --text-secondary: #9e9ea7;
+  --text-muted: #63636c;
+
+  /* TIER 2: TOKENS SEMÁNTICOS */
+  --bg-canvas: var(--obsidian-950);
+  --bg-surface: var(--obsidian-900);
+  --bg-inset: var(--obsidian-850);
+  --bg-hover: var(--obsidian-800);
+  --border-primary: var(--obsidian-700);
+  --border-subtle: #1a1a1e;
+  --border-focus: var(--obsidian-500);
+
+  --signal-buy: var(--emerald-500);
+  --signal-buy-bg: var(--emerald-600);
+  --signal-buy-border: var(--emerald-400);
+
+  --signal-monitor: var(--amber-500);
+  --signal-monitor-bg: var(--amber-600);
+  --signal-monitor-border: var(--amber-400);
+
+  --signal-sell: var(--ruby-500);
+  --signal-sell-bg: var(--ruby-600);
+  --signal-sell-border: var(--ruby-400);
+
+  /* TIER 3: TOKENS ESPACIALES (Cuadrícula 4-pt, Densidad 9/10) */
+  --space-2xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+
+  /* TIPOGRAFÍA */
+  --font-mono: "Geist Mono", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter Display", system-ui, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-canvas);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* UTILIDADES TABULARES Y MONOESPACIO OBLIGATORIAS */
+.tabular-nums, .font-mono {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+/* ENCABEZADO SUPERIOR TÉCNICO (TOPBAR) */
+.console-header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--space-sm) var(--space-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.brand-badge {
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-primary);
+  padding: var(--space-2xs) var(--space-sm);
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.brand-title {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.system-status-pills {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-2xs) var(--space-sm);
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  font-size: 11px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot.healthy { background-color: var(--emerald-500); }
+.status-dot.stale { background-color: var(--amber-500); }
+.status-dot.error { background-color: var(--ruby-500); }
+
+/* CONTENEDOR PRINCIPAL */
+.console-main {
+  flex: 1;
+  padding: var(--space-lg);
+  display: grid;
+  grid-template-columns: 320px 1fr 340px;
+  gap: var(--space-lg);
+}
+
+/* PANELES DE CONTROL SÓLIDOS */
+.console-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-xs);
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* BALIZA ÓPTICA DE HARDWARE */
+.optical-telemetry-container {
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.optical-bezel {
+  display: inline-flex;
+  align-items: center;
+  background-color: #0e0e11;
+  border: 1px solid var(--border-primary);
+  border-radius: 6px;
+  padding: var(--space-sm);
+  gap: var(--space-sm);
+  user-select: none;
+}
+
+.diode {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.specular-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: #ffffff;
+}
+
+/* Estados de Diodos */
+.diode-green.active {
+  background-color: var(--emerald-500);
+  border-color: var(--emerald-400);
+}
+.diode-green.inactive {
+  background-color: rgba(6, 40, 30, 0.4);
+  border-color: rgba(14, 83, 60, 0.6);
+  opacity: 0.35;
+}
+
+.diode-yellow.active {
+  background-color: var(--amber-500);
+  border-color: var(--amber-400);
+}
+.diode-yellow.inactive {
+  background-color: rgba(44, 27, 4, 0.4);
+  border-color: rgba(107, 67, 8, 0.6);
+  opacity: 0.35;
+}
+
+.diode-red.active {
+  background-color: var(--ruby-500);
+  border-color: var(--ruby-400);
+}
+.diode-red.inactive {
+  background-color: rgba(46, 11, 17, 0.4);
+  border-color: rgba(113, 27, 37, 0.6);
+  opacity: 0.35;
+}
+
+.beacon-state-text {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+.beacon-state-text.GREEN { color: var(--emerald-400); }
+.beacon-state-text.YELLOW { color: var(--amber-400); }
+.beacon-state-text.RED { color: var(--ruby-400); }
+
+/* GRID DE MÉTRICAS KPI (DENSIDAD ALTA) */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-sm);
+}
+
+.kpi-cell {
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.kpi-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.kpi-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* TABLA DE ÓRDENES Y TRANSICIONES */
+.dense-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.dense-table th {
+  background-color: var(--bg-inset);
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+  text-align: left;
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.dense-table td {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  height: 28px;
+  white-space: nowrap;
+}
+
+.dense-table tr:hover td {
+  background-color: var(--bg-hover);
+}
+
+/* BARRA DE ESPECTRO CONTINUO */
+.spectrum-bar-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.spectrum-bar {
+  height: 8px;
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-primary);
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+}
+
+.spectrum-segment-bid {
+  background-color: var(--emerald-500);
+  transition: width 100ms ease;
+}
+
+.spectrum-segment-ask {
+  background-color: var(--ruby-500);
+  transition: width 100ms ease;
+}
+
+.spectrum-segment-risk {
+  border-radius: 2px;
+  transition: width 100ms ease, background-color 200ms ease;
+}
+
+/* SELECTOR DE PARES */
+.pair-selector-bar {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.pair-tab {
+  flex: 1;
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-primary);
+  color: var(--text-secondary);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 100ms linear;
+}
+
+.pair-tab.active {
+  background-color: var(--obsidian-800);
+  border-color: var(--text-muted);
+  color: var(--text-primary);
+}
+
+.pair-tab:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 1px;
+}
+
+/* REASON CODES LIST */
+.reason-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.reason-tag {
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+}
+
+/* PALETA DE COMANDOS MODAL (⌘K) */
+.command-palette-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(9, 9, 11, 0.85);
+  display: none;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 15vh;
+  z-index: 999;
+}
+
+.command-palette-backdrop.open {
+  display: flex;
+}
+
+.command-palette-modal {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-primary);
+  border-radius: 8px;
+  width: 480px;
+  overflow: hidden;
+}
+
+.command-input {
+  width: 100%;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-primary);
+  padding: var(--space-md);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 13px;
+  outline: none;
+}
+
+.command-list {
+  padding: var(--space-xs);
+  list-style: none;
+}
+
+.command-item {
+  padding: var(--space-sm) var(--space-md);
+  border-radius: 4px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+.command-item:hover, .command-item.selected {
+  background-color: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.command-shortcut {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 2px 5px;
+  background-color: var(--bg-inset);
+  border: 1px solid var(--border-subtle);
+  border-radius: 3px;
+  color: var(--text-muted);
+}

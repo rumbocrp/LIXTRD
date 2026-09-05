@@ -216,3 +216,15 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LIXTRD: artefactos locales no publicados
+.lights.db
+luces.db
+*.db
+*.db-wal
+*.db-shm
+.tmp/
+.agents/
+.DS_Store
+*.DS_Store
+.scratch/

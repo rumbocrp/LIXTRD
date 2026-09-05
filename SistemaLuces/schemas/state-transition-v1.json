@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/state-transition-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "transition_id",
+    "aggregate_type",
+    "aggregate_id",
+    "previous_state",
+    "next_state",
+    "actor",
+    "occurred_at_utc",
+    "correlation_id",
+    "policy_version",
+    "reason_codes",
+    "safety_forced"
+  ],
+  "properties": {
+    "transition_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+    "aggregate_type": {
+      "type": "string",
+      "enum": ["feed", "signal", "light", "simulation", "label"]
+    },
+    "aggregate_id": { "type": "string" },
+    "previous_state": { "type": ["string", "null"] },
+    "next_state": { "type": "string" },
+    "actor": {
+      "type": "string",
+      "enum": ["system", "operator", "import"]
+    },
+    "occurred_at_utc": { "type": "string", "format": "date-time" },
+    "causation_id": { "type": ["string", "null"], "pattern": "^[0-9a-fA-F-]{36}$" },
+    "correlation_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+    "policy_version": { "type": "string" },
+    "reason_codes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "safety_forced": { "type": "boolean" }
+  }
+}

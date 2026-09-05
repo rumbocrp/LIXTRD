@@ -1,0 +1,4 @@
+symbol,direction,setup_id,entry_price,stop_loss_price,take_profit_price,entry_timestamp_utc,exit_price,exit_timestamp_utc,pnl_usd,commission_usd,slippage_pips,market_regime_tag,operator_notes
+XAUUSD,BUY,GOLD_DXY_MACRO_REVERSION,2050.40,2042.00,2075.00,1788380000000,2075.00,1788381800000,2460.00,7.00,0.15,NORMAL,"Entrada por desacople DXY + confluencia OFI"
+TSLA,SELL,SP500_TSLA_BETA_MOMENTUM,218.50,222.00,210.00,1788382000000,210.00,1788383200000,850.00,2.50,0.05,HIGH_VOLATILITY,"Venta en ráfaga de momentum /ES bajista"
+AAPL,BUY,SP500_AAPL_ANCHOR_PULLBACK,184.30,182.50,188.00,1788384000000,188.00,1788385200000,370.00,1.50,0.02,NORMAL,"Rebote en media tras absorción de ventas"

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/import-manifest-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "import_id",
+    "format",
+    "adapter_version",
+    "timestamp_utc",
+    "file_sha256",
+    "file_size_bytes",
+    "accepted_rows",
+    "rejected_rows",
+    "source_origin_hash"
+  ],
+  "properties": {
+    "import_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+    "format": { "type": "string" },
+    "adapter_version": { "type": "string" },
+    "timestamp_utc": { "type": "string", "format": "date-time" },
+    "file_sha256": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "file_size_bytes": { "type": "integer", "minimum": 1 },
+    "accepted_rows": { "type": "integer", "minimum": 0 },
+    "rejected_rows": { "type": "integer", "minimum": 0 },
+    "source_origin_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" }
+  }
+}

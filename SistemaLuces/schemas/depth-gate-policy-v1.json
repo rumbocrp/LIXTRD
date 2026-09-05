@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/depth-gate-policy-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_version",
+    "required_complete_sessions",
+    "minimum_event_coverage_scaled",
+    "minimum_sequence_continuity_scaled",
+    "maximum_unresolved_gaps",
+    "maximum_out_of_order",
+    "maximum_clock_rollbacks",
+    "maximum_stale_time_ratio_scaled",
+    "corpus_hash",
+    "approver",
+    "approved_at_utc"
+  ],
+  "properties": {
+    "policy_version": { "type": "string" },
+    "required_complete_sessions": { "type": "integer", "minimum": 1 },
+    "minimum_event_coverage_scaled": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "minimum_sequence_continuity_scaled": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "maximum_unresolved_gaps": { "type": "integer", "minimum": 0 },
+    "maximum_out_of_order": { "type": "integer", "minimum": 0 },
+    "maximum_clock_rollbacks": { "type": "integer", "minimum": 0 },
+    "maximum_stale_time_ratio_scaled": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "corpus_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "approver": { "type": "string" },
+    "approved_at_utc": { "type": "string", "format": "date-time" }
+  }
+}

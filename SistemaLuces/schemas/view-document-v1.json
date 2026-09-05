@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/view-document-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_id",
+    "document_hash",
+    "canonical_json_utf8"
+  ],
+  "properties": {
+    "schema_id": {
+      "type": "string",
+      "enum": [
+        "sistema-luces/event-envelope-v1",
+        "sistema-luces/state-transition-v1",
+        "sistema-luces/signal-v1",
+        "sistema-luces/simulation-v1",
+        "sistema-luces/metric-snapshot-v1"
+      ]
+    },
+    "document_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "canonical_json_utf8": { "type": "string" }
+  }
+}

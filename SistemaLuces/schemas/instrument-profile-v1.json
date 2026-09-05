@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/instrument-profile-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "instrument",
+    "provider",
+    "symbol_id",
+    "price_scale",
+    "point_size",
+    "lot_min",
+    "lot_step",
+    "lot_max",
+    "currency",
+    "point_value",
+    "economic_ready"
+  ],
+  "properties": {
+    "profile_version": { "type": "string" },
+    "instrument": { "type": "string", "const": "US500" },
+    "provider": { "type": "string" },
+    "symbol_id": { "type": "string" },
+    "price_scale": { "type": "integer", "minimum": 1 },
+    "point_size": { "type": "integer", "minimum": 1 },
+    "lot_min": { "type": "integer", "minimum": 1 },
+    "lot_step": { "type": "integer", "minimum": 1 },
+    "lot_max": { "type": "integer", "minimum": 1 },
+    "currency": { "type": "string" },
+    "point_value": { "type": "integer", "minimum": 1 },
+    "economic_ready": { "type": "boolean" },
+    "validation_evidence_hash": { "type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$" }
+  }
+}

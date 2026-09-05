@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/cost-profile-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_version",
+    "spread_points_base",
+    "spread_points_adverse",
+    "spread_points_stress",
+    "slippage_points_base",
+    "slippage_points_adverse",
+    "slippage_points_stress",
+    "commission_per_lot_usd_cents",
+    "carry_per_night_usd_cents",
+    "latency_ms_base",
+    "latency_ms_stress"
+  ],
+  "properties": {
+    "profile_version": { "type": "string" },
+    "spread_points_base": { "type": "integer", "minimum": 0 },
+    "spread_points_adverse": { "type": "integer", "minimum": 0 },
+    "spread_points_stress": { "type": "integer", "minimum": 0 },
+    "slippage_points_base": { "type": "integer", "minimum": 0 },
+    "slippage_points_adverse": { "type": "integer", "minimum": 0 },
+    "slippage_points_stress": { "type": "integer", "minimum": 0 },
+    "commission_per_lot_usd_cents": { "type": "integer", "minimum": 0 },
+    "carry_per_night_usd_cents": { "type": "integer", "minimum": 0 },
+    "latency_ms_base": { "type": "integer", "minimum": 0 },
+    "latency_ms_stress": { "type": "integer", "minimum": 0 }
+  }
+}

@@ -1,0 +1,20 @@
+[project]
+name = "sistema-luces"
+version = "0.0.0"
+description = "Producto local observable para US500"
+readme = "README.md"
+requires-python = "==3.11.*"
+dependencies = [
+    "yfinance>=1.7.0",
+]
+
+[tool.sistema-luces]
+python-runtime = "3.11.16"
+sqlite-runtime = "3.53.1"
+timezone = "UTC"
+locale = "C"
+hash-seed = 0
+clock-seed = 20260829
+
+[tool.setuptools.package-data]
+"sistema_luces.ui" = ["dashboard-v1.js"]

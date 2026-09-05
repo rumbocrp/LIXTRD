@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/model-gate-policy-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "policy_version",
+    "leakage_violations_max",
+    "effective_sample_size_min",
+    "brier_improvement_min_scaled",
+    "ece_max_scaled",
+    "net_utility_base_ci_lower_exclusive",
+    "net_utility_adverse_min",
+    "profitable_walk_forward_ratio_min_scaled",
+    "purge_required",
+    "embargo_required",
+    "out_of_fold_calibration_required",
+    "severe_drift_allowed",
+    "cohort_hash",
+    "cost_hash",
+    "approver",
+    "approved_at_utc"
+  ],
+  "properties": {
+    "policy_version": { "type": "string" },
+    "leakage_violations_max": { "type": "integer", "minimum": 0 },
+    "effective_sample_size_min": { "type": "integer", "minimum": 1 },
+    "brier_improvement_min_scaled": { "type": "integer" },
+    "ece_max_scaled": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "net_utility_base_ci_lower_exclusive": { "type": "integer" },
+    "net_utility_adverse_min": { "type": "integer" },
+    "profitable_walk_forward_ratio_min_scaled": { "type": "integer", "minimum": 0, "maximum": 1000000 },
+    "purge_required": { "type": "boolean" },
+    "embargo_required": { "type": "boolean" },
+    "out_of_fold_calibration_required": { "type": "boolean" },
+    "severe_drift_allowed": { "type": "boolean" },
+    "cohort_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "cost_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "approver": { "type": "string" },
+    "approved_at_utc": { "type": "string", "format": "date-time" }
+  }
+}

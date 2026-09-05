@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/api-results-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "resumen_ejecucion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "run_id",
+        "environment",
+        "accepted_event_count",
+        "rejected_event_count",
+        "emitted_signal_count",
+        "opened_simulation_count",
+        "reason_codes"
+      ],
+      "properties": {
+        "run_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": { "type": "string", "enum": ["REPLAY", "SHADOW"] },
+        "final_event_cutoff": { "type": ["string", "null"] },
+        "accepted_event_count": { "type": "integer", "minimum": 0 },
+        "rejected_event_count": { "type": "integer", "minimum": 0 },
+        "emitted_signal_count": { "type": "integer", "minimum": 0 },
+        "opened_simulation_count": { "type": "integer", "minimum": 0 },
+        "reason_codes": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "resumen_importacion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "import_id",
+        "environment",
+        "accepted_count",
+        "rejected_count",
+        "matched_count",
+        "unmatched_count",
+        "reason_codes"
+      ],
+      "properties": {
+        "import_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": { "type": "string", "const": "BROKER_DEMO_OBSERVED" },
+        "final_event_cutoff": { "type": ["string", "null"] },
+        "accepted_count": { "type": "integer", "minimum": 0 },
+        "rejected_count": { "type": "integer", "minimum": 0 },
+        "matched_count": { "type": "integer", "minimum": 0 },
+        "unmatched_count": { "type": "integer", "minimum": 0 },
+        "reason_codes": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

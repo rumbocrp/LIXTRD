@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/metric-snapshot-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "metric_snapshot_id",
+    "metric_name",
+    "metric_plane",
+    "range_start_utc",
+    "range_end_utc",
+    "ny_session_date",
+    "source",
+    "environment",
+    "instrument",
+    "policy_version",
+    "raw_count",
+    "effective_sample_size",
+    "unit",
+    "scale",
+    "dimensions",
+    "input_event_cutoff",
+    "code_hash",
+    "computed_at_utc",
+    "schema_version"
+  ],
+  "properties": {
+    "metric_snapshot_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+    "metric_name": { "type": "string" },
+    "metric_plane": {
+      "type": "string",
+      "enum": ["FEED", "SIGNALS", "PREDICTIVE", "ROBUSTNESS", "DEMO", "EXECUTION", "SECURITY", "TRACEABILITY"]
+    },
+    "range_start_utc": { "type": "string", "format": "date-time" },
+    "range_end_utc": { "type": "string", "format": "date-time" },
+    "ny_session_date": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+    "source": {
+      "type": "string",
+      "enum": ["replay", "yahoo_finance", "ctrader_demo", "broker_demo_import", "journal_import", "simulator", "system", "operator"]
+    },
+    "environment": {
+      "type": "string",
+      "enum": ["NO_DATA", "SINTETICO", "REPLAY", "SHADOW", "DEMO_OBSERVADO", "BROKER_DEMO_OBSERVED"]
+    },
+    "instrument": { "type": "string", "const": "US500" },
+    "strategy_version": { "type": ["string", "null"] },
+    "model_version": { "type": ["string", "null"] },
+    "policy_version": { "type": "string" },
+    "raw_count": { "type": "integer", "minimum": 0 },
+    "effective_sample_size": { "type": "integer", "minimum": 0 },
+    "value_int": { "type": ["integer", "null"] },
+    "value_ratio_scaled": { "type": ["integer", "null"] },
+    "histogram_int": { "type": ["array", "null"], "items": { "type": "integer" } },
+    "unit": { "type": "string" },
+    "scale": { "type": "integer", "minimum": 1 },
+    "dimensions": { "type": "object" },
+    "input_event_cutoff": { "type": "string", "format": "date-time" },
+    "dataset_hash": { "type": ["string", "null"], "pattern": "^[0-9a-fA-F]{64}$" },
+    "code_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+    "computed_at_utc": { "type": "string", "format": "date-time" },
+    "schema_version": { "type": "integer", "const": 1 }
+  }
+}

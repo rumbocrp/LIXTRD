@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/proyeccion-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "environment",
+    "instrument",
+    "market_cutoff_utc",
+    "data_age_ms",
+    "health_state",
+    "light",
+    "direction",
+    "reason_codes",
+    "model_id",
+    "model_version",
+    "model_hash",
+    "policy_version",
+    "transitions",
+    "simulations",
+    "metrics",
+    "incidents",
+    "kill_switch_active",
+    "ui_state",
+    "as_of_event_id"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "environment": {
+      "type": "string",
+      "enum": [
+        "NO_DATA",
+        "SINTETICO",
+        "REPLAY",
+        "SHADOW",
+        "DEMO_OBSERVADO",
+        "BROKER_DEMO_OBSERVED"
+      ]
+    },
+    "instrument": {
+      "type": "string",
+      "const": "US500"
+    },
+    "market_cutoff_utc": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+    "data_age_ms": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "health_state": {
+      "type": "string",
+      "enum": [
+        "NO_DATA",
+        "INITIALIZING",
+        "HEALTHY",
+        "STALE",
+        "GAPPED",
+        "RECONNECTING",
+        "STOPPED",
+        "ERROR"
+      ]
+    },
+    "light": {
+      "type": "string",
+      "enum": [
+        "GREEN",
+        "YELLOW",
+        "RED"
+      ]
+    },
+    "direction": {
+      "type": "string",
+      "enum": [
+        "LARGO",
+        "MONITORIZAR",
+        "CORTO"
+      ]
+    },
+    "reason_codes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "model_id": {
+      "type": ["string", "null"]
+    },
+    "model_version": {
+      "type": ["string", "null"]
+    },
+    "model_hash": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "policy_version": {
+      "type": "string"
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "simulations": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "incidents": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "kill_switch_active": {
+      "type": "boolean"
+    },
+    "ui_state": {
+      "type": "string",
+      "enum": [
+        "cargando",
+        "vacio",
+        "parcial",
+        "error",
+        "obsoleto",
+        "conflicto",
+        "exito"
+      ]
+    },
+    "as_of_event_id": {
+      "type": ["string", "null"],
+      "pattern": "^[0-9a-fA-F-]{36}$"
+    },
+    "next_cursor": {
+      "type": ["string", "null"]
+    },
+    "session": {
+      "type": ["string", "null"]
+    },
+    "bid": {
+      "type": ["number", "null"]
+    },
+    "ask": {
+      "type": ["number", "null"]
+    },
+    "spread": {
+      "type": ["number", "null"]
+    },
+    "mid_price": {
+      "type": ["number", "null"]
+    },
+    "micro_price": {
+      "type": ["number", "null"]
+    },
+    "beta_kalman": {
+      "type": ["number", "null"]
+    },
+    "z_score": {
+      "type": ["number", "null"]
+    },
+    "desbalance_ofi": {
+      "type": ["number", "null"]
+    },
+    "balancines": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "market_assets": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "drawdown_diario_pct": {
+      "type": ["number", "null"]
+    },
+    "limite_por_trade_pct": {
+      "type": ["number", "null"]
+    },
+    "slots_concurrentes_usados": {
+      "type": ["integer", "null"]
+    },
+    "slots_concurrentes_max": {
+      "type": ["integer", "null"]
+    },
+    "pnl_paper_acumulado": {
+      "type": ["number", "null"]
+    },
+    "secuencia": {
+      "type": ["integer", "null"]
+    },
+    "hash_snapshot": {
+      "type": ["string", "null"]
+    },
+    "salud_feed": {
+      "type": ["string", "null"]
+    },
+    "diagnostico_semaforo": {
+      "type": ["object", "null"],
+      "additionalProperties": false,
+      "required": [
+        "probability_long_pct",
+        "probability_short_pct",
+        "threshold_green_pct",
+        "threshold_red_pct",
+        "distance_to_green_pp",
+        "distance_to_red_pp",
+        "threshold_source",
+        "source_event_id"
+      ],
+      "properties": {
+        "probability_long_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "probability_short_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "threshold_green_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "threshold_red_pct": { "type": "number", "minimum": 0, "maximum": 100 },
+        "distance_to_green_pp": { "type": "number" },
+        "distance_to_red_pp": { "type": "number" },
+        "threshold_source": { "type": "string" },
+        "source_event_id": { "type": ["string", "null"] }
+      }
+    },
+    "market_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "provider": { "type": "string" },
+        "provider_url": { "type": "string" },
+        "provider_symbol": { "type": "string", "const": "^GSPC" },
+        "instrument_type": { "type": "string", "const": "INDEX" },
+        "currency": { "type": "string" },
+        "exchange": { "type": "string" },
+        "exchange_timezone": { "type": "string" },
+        "last_price": { "type": "number" },
+        "previous_close": { "type": "number" },
+        "day_open": { "type": "number" },
+        "day_high": { "type": "number" },
+        "day_low": { "type": "number" },
+        "change": { "type": "number" },
+        "change_pct": { "type": "number" },
+        "bid": { "type": "number" },
+        "ask": { "type": "number" },
+        "day_volume": { "type": "integer", "minimum": 0 },
+        "source_timestamp_utc": { "type": "string", "format": "date-time" },
+        "received_at_utc": { "type": "string", "format": "date-time" },
+        "market_state": { "type": "string", "enum": ["REGULAR", "CLOSED", "UNKNOWN"] },
+        "transport": { "type": "string", "enum": ["REST_1M", "WEBSOCKET"] },
+        "data_granularity": { "type": "string" },
+        "quote_status": { "type": "string" },
+        "fetch_latency_ms": { "type": "integer", "minimum": 0 },
+        "source_to_receive_ms": { "type": "integer", "minimum": 0 },
+        "data_age_ms": { "type": ["integer", "null"], "minimum": 0 },
+        "connection_age_ms": { "type": ["integer", "null"], "minimum": 0 }
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "allowed_capabilities": [
+    "account_metadata.read",
+    "historical_executions.read",
+    "market_data.read"
+  ],
+  "allowed_cli_commands": [],
+  "allowed_http_methods": [],
+  "allowed_import_roots": [
+    "yfinance"
+  ],
+  "allowed_root_exports": [
+    "consultar_vista",
+    "ejecutar_replay",
+    "ejecutar_shadow",
+    "importar_demo_observada"
+  ],
+  "allowed_runtime_dependencies": [
+    "beautifulsoup4",
+    "certifi",
+    "cffi",
+    "charset-normalizer",
+    "curl-cffi",
+    "idna",
+    "lxml",
+    "multitasking",
+    "numpy",
+    "pandas",
+    "peewee",
+    "platformdirs",
+    "protobuf",
+    "pycparser",
+    "python-dateutil",
+    "pytz",
+    "requests",
+    "six",
+    "soupsieve",
+    "typing-extensions",
+    "tzdata",
+    "urllib3",
+    "websockets",
+    "yfinance"
+  ],
+  "schema_id": "sistema-luces/security-policy-v1",
+  "version": 1
+}

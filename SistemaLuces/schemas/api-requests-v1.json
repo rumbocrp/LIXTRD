@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "sistema-luces/api-requests-v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "solicitud_replay": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlation_id",
+        "environment",
+        "dataset_manifest_hash",
+        "range_start_utc",
+        "range_end_utc",
+        "clock_seed"
+      ],
+      "properties": {
+        "correlation_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": { "type": "string", "const": "REPLAY" },
+        "dataset_manifest_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+        "range_start_utc": { "type": "string", "format": "date-time" },
+        "range_end_utc": { "type": "string", "format": "date-time" },
+        "clock_seed": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "solicitud_shadow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlation_id",
+        "environment",
+        "source_profile_version",
+        "capabilities_manifest_hash",
+        "expected_demo_account_hash"
+      ],
+      "properties": {
+        "correlation_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": { "type": "string", "const": "SHADOW" },
+        "source_profile_version": { "type": "string" },
+        "capabilities_manifest_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+        "expected_demo_account_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" }
+      }
+    },
+    "solicitud_importacion_demo": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "correlation_id",
+        "environment",
+        "staged_copy",
+        "expected_sha256",
+        "adapter_version",
+        "expected_demo_account_hash"
+      ],
+      "properties": {
+        "correlation_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": { "type": "string", "const": "BROKER_DEMO_OBSERVED" },
+        "staged_copy": { "type": "string" },
+        "expected_sha256": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" },
+        "adapter_version": { "type": "string" },
+        "expected_demo_account_hash": { "type": "string", "pattern": "^[0-9a-fA-F]{64}$" }
+      }
+    },
+    "solicitud_consulta": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["correlation_id", "environment", "view", "limit"],
+      "properties": {
+        "correlation_id": { "type": "string", "pattern": "^[0-9a-fA-F-]{36}$" },
+        "environment": {
+          "type": "string",
+          "enum": ["NO_DATA", "SINTETICO", "REPLAY", "SHADOW", "DEMO_OBSERVADO", "BROKER_DEMO_OBSERVED"]
+        },
+        "view": {
+          "type": "string",
+          "enum": ["FEED", "LIGHTS", "SIGNALS", "SIMULATIONS", "METRICS", "SECURITY", "TRACE", "IMPORTS"]
+        },
+        "as_of_event_id": { "type": ["string", "null"], "pattern": "^[0-9a-fA-F-]{36}$" },
+        "cursor": { "type": ["string", "null"] },
+        "limit": { "type": "integer", "minimum": 1, "maximum": 200 }
+      }
+    }
+  }
+}
