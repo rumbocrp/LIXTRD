@@ -1,11 +1,19 @@
-"""Proyecciones de lectura reconstruibles desde el event log (SPEC-001 §9.1, CA-21, Milestone 2 & 3)."""
+"""Proyecciones de lectura reconstruibles desde el event log (SPEC-001 §9.1, CA-21, Milestone 2 & 3).
+
+FASE 1: Soporte multi-activo para US500, XAUUSD, TSLA, AAPL con proyector por instrumento.
+"""
 
 from datetime import datetime, timezone
 import hashlib
 import threading
-from typing import Any, Literal
+from typing import Any, Dict, Literal
 import uuid
 
+from sistema_luces.config.multi_asset_config import (
+    CONFIGURACION_INSTRUMENTOS,
+    INSTRUMENTOS_PERMITIDOS,
+    obtener_config_instrumento,
+)
 from sistema_luces.domain.api import (
     BalancinItemV1,
     DocumentoVistaV1,
@@ -96,10 +104,21 @@ def _diagnostico_activo_validado(value: object) -> dict[str, Any] | None:
 
 
 class ProyectorVistas:
-    """Mantiene y reconstruye proyecciones de lectura y telemetría a partir de hechos persistidos."""
+    """Mantiene y reconstruye proyecciones de lectura y telemetría a partir de hechos persistidos.
+    
+    FASE 1: Soporte multi-activo - cada instancia maneja UN instrumento específico.
+    El servidor UI debe mantener un diccionario de proyectores por instrumento.
+    """
 
-    def __init__(self) -> None:
-        self._instrument = "US500"
+    def __init__(self, instrumento: str = "US500") -> None:
+        if instrumento not in INSTRUMENTOS_PERMITIDOS:
+            raise ValueError(
+                f"Instrumento '{instrumento}' no permitido. "
+                f"Opciones válidas: {sorted(INSTRUMENTOS_PERMITIDOS)}"
+            )
+        
+        self._instrument = instrumento
+        self._config = obtener_config_instrumento(instrumento)
         self._lock = threading.RLock()
         self._documentos_por_vista: dict[str, list[dict[str, Any]]] = {
             "FEED": [],
@@ -180,9 +199,23 @@ class ProyectorVistas:
             payload = evento.payload if isinstance(evento.payload, dict) else {}
             self._documentos_por_vista["FEED"].append(payload)
 
+            # Extraer precio del payload (puede venir como last_price_scaled o directamente como precio)
+            last_price_scaled = payload.get("last_price_scaled")
+            price_scale = payload.get("price_scale", 100) or 100
+            
+            if last_price_scaled is not None:
+                # Convertir precio escalado a USD
+                last_price_usd = float(last_price_scaled) / float(price_scale)
+                self._last_mid_price = round(last_price_usd, 2)
+                
+                # Guardar en market_data para referencia
+                self._market_data["last_price"] = last_price_usd
+                self._market_data["provider"] = payload.get("provider", "unknown")
+                self._market_data["provider_symbol"] = payload.get("provider_symbol", "")
+            
+            # Si hay bid/ask, usar lógica completa
             bid = payload.get("bid")
             ask = payload.get("ask")
-            scale = payload.get("price_scale", 100) or 100
             if bid is not None and ask is not None:
                 b_usd = float(bid) / float(scale)
                 a_usd = float(ask) / float(scale)

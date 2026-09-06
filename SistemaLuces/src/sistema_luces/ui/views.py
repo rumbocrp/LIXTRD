@@ -193,72 +193,72 @@ def render_dashboard_html(
         snapshot_hash = None
         balancines_items = []
 
-    # Banners según el estado canónico de UI
+    # Banners segun el estado canonico de UI
     banners_html = ""
     if getattr(vista, "environment", "") == "SINTETICO":
         banners_html += """
         <div class="banner banner-synthetic">
-            🧪 <strong>LABORATORIO SINTÉTICO</strong> — Datos generados para pruebas y benchmarking. No apto para operativa real ni demo observada.
+            <strong>LABORATORIO SINTETICO</strong> - Datos generados para pruebas y benchmarking. No apto para operativa real ni demo observada.
         </div>
         """
 
     if market_data:
-        provider_banner = html.escape(str(market_data.get("provider") or "Fuente pública"))
+        provider_banner = html.escape(str(market_data.get("provider") or "Fuente publica"))
         symbol_banner = html.escape(str(market_data.get("provider_symbol") or "^GSPC"))
         quote_status_banner = html.escape(str(market_data.get("quote_status") or "N/A"))
         market_state_banner = str(market_data.get("market_state") or "UNKNOWN")
         if market_state_banner == "CLOSED":
-            market_copy = "MERCADO CERRADO — el último valor válido permanece visible y no se simula movimiento."
+            market_copy = "MERCADO CERRADO - el ultimo valor valido permanece visible y no se simula movimiento."
         else:
-            market_copy = "MERCADO ABIERTO — el stream actualiza cuando Yahoo publica un nuevo mensaje."
+            market_copy = "MERCADO ABIERTO - el stream actualiza cuando Yahoo publica un nuevo mensaje."
         banners_html += f"""
         <div class="banner banner-warning">
-            📡 <strong>{provider_banner} · {symbol_banner}</strong> — {market_copy}
-            Estado de cotización del proveedor: <strong>{quote_status_banner}</strong>.
-            Esta observación pública no sustituye bid/ask de broker ni certifica la luz.
+            <strong>{provider_banner} . {symbol_banner}</strong> - {market_copy}
+            Estado de cotizacion del proveedor: <strong>{quote_status_banner}</strong>.
+            Esta observacion publica no sustituye bid/ask de broker ni certifica la luz.
         </div>
         """
 
     if estado_activo == "cargando":
         banners_html += f"""
         <div class="banner banner-info">
-            ⏳ <strong>Cargando telemetría</strong> — Esperando inicialización del entorno {env_escaped}. Ningún dato anterior es presentado como actual.
+            <strong>Cargando telemetria</strong> - Esperando inicializacion del entorno {env_escaped}. Ningun dato anterior es presentado como actual.
         </div>
         """
     elif estado_activo == "vacio":
         banners_html += f"""
         <div class="banner banner-info">
-            ℹ️ <strong>Todavía no hay evidencia</strong> — El entorno {env_escaped} no ha registrado eventos. El sistema permanece en estado seguro <strong>AMARILLO (MONITORIZAR)</strong>.
+            <strong>Todavia no hay evidencia</strong> - El entorno {env_escaped} no ha registrado eventos. El sistema permanece en estado seguro <strong>AMARILLO (MONITORIZAR)</strong>.
         </div>
         """
     elif estado_activo == "obsoleto":
         banners_html += """
         <div class="banner banner-warning">
-            ⚠️ <strong>Datos obsoletos</strong> — La telemetría ha superado el umbral de latencia (&gt;5000 ms) o el feed está degradado. Luz forzada a <strong>AMARILLO (MONITORIZAR)</strong>.
+            <strong>Datos obsoletos</strong> - La telemetria ha superado el umbral de latencia (&gt;5000 ms) o el feed esta degradado. Luz forzada a <strong>AMARILLO (MONITORIZAR)</strong>.
         </div>
         """
     elif estado_activo == "error":
         banners_html += """
         <div class="banner banner-danger">
-            🚨 <strong>Condición de error</strong> — Se detectó una anomalía en el procesamiento. Modo de seguridad activado: <strong>MONITORIZAR</strong>.
+            <strong>Condicion de error</strong> - Se detecto una anomalia en el procesamiento. Modo de seguridad activado: <strong>MONITORIZAR</strong>.
         </div>
         """
     elif estado_activo == "conflicto":
         banners_html += """
         <div class="banner banner-danger">
-            ⚠️ <strong>Conflicto de versiones / Esquema</strong> — Incompatibilidad detectada en el contrato de datos. Vista congelada en estado seguro.
+            <strong>Conflicto de versiones / Esquema</strong> - Incompatibilidad detectada en el contrato de datos. Vista congelada en estado seguro.
         </div>
         """
     elif estado_activo == "parcial":
         banners_html += """
         <div class="banner banner-info">
-            📊 <strong>Telemetría parcial</strong> — Se presentan únicamente los datos verificados disponibles. Las métricas no maduras se muestran como N/A.
+            <strong>Telemetria parcial</strong> - Se presentan unicamente los datos verificados disponibles. Las metricas no maduras se muestran como N/A.
         </div>
         """
     elif estado_activo == "exito":
         banners_html += f"""
         <div class="banner banner-success">
-            ✅ <strong>Telemetría íntegra y verificada</strong> — Secuencia sincronizada hasta el evento {as_of_event_escaped}.
+            <strong>Telemetria integra y verificada</strong> - Secuencia sincronizada hasta el evento {as_of_event_escaped}.
         </div>
         """
 

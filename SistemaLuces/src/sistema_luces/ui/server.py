@@ -6,11 +6,15 @@ import http.server
 import json
 from pathlib import Path
 import sys
-from typing import Any
+from typing import Any, Dict
+import logging
 
 from sistema_luces.domain.api import SolicitudConsulta
 from sistema_luces.observability.projections import ProyectorVistas
 from sistema_luces.ui.views import deducir_estado_ui, render_dashboard_html
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 _ALLOWED_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
 _CSP_HEADER = "default-src 'self'; script-src 'self'; connect-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; object-src 'none'; base-uri 'none';"
@@ -52,7 +56,26 @@ class ManejadorServidorLoopback(http.server.BaseHTTPRequestHandler):
         else:
             self._handle_dashboard_html()
 
-    def _get_default_solicitud(self) -> SolicitudConsulta:
+    def _parsear_query_params(self) -> dict:
+        """Extrae parámetros de query string para soporte multi-activo."""
+        params = {}
+        if "?" in self.path:
+            query_string = self.path.split("?", 1)[1]
+            for param in query_string.split("&"):
+                if "=" in param:
+                    key, value = param.split("=", 1)
+                    params[key] = value
+        return params
+
+    def _get_default_solicitud(self, instrumento: str = "US500") -> SolicitudConsulta:
+        params = self._parsear_query_params()
+        instrumento_param = params.get("instrument", instrumento)
+        
+        # Validar instrumento solicitado
+        from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+        if instrumento_param not in INSTRUMENTOS_PERMITIDOS:
+            instrumento_param = "US500"  # Fallback seguro
+        
         return SolicitudConsulta(
             correlation_id="00000000-0000-0000-0000-000000000001",
             environment="REPLAY",
@@ -63,8 +86,18 @@ class ManejadorServidorLoopback(http.server.BaseHTTPRequestHandler):
         )
 
     def _handle_dashboard_html(self) -> None:
-        solicitud = self._get_default_solicitud()
-        res_vista = self.proyector.consultar(solicitud)
+        params = self._parsear_query_params()
+        instrumento_solicitado = params.get("instrument", "US500")
+        
+        # Validar y seleccionar proyector
+        from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+        if instrumento_solicitado not in INSTRUMENTOS_PERMITIDOS:
+            instrumento_solicitado = "US500"
+        
+        proyector_activo = getattr(self, "proyectores_multi", {}).get(instrumento_solicitado, self.proyector)
+        
+        solicitud = self._get_default_solicitud(instrumento_solicitado)
+        res_vista = proyector_activo.consultar(solicitud)
         if res_vista.exito:
             html_content = render_dashboard_html(res_vista.datos).encode("utf-8")
             self.send_response(200)
@@ -84,8 +117,18 @@ class ManejadorServidorLoopback(http.server.BaseHTTPRequestHandler):
         self.wfile.writelines([script])
 
     def _handle_status_json(self) -> None:
-        solicitud = self._get_default_solicitud()
-        res_vista = self.proyector.consultar(solicitud)
+        params = self._parsear_query_params()
+        instrumento_solicitado = params.get("instrument", "US500")
+        
+        # Validar y seleccionar proyector
+        from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+        if instrumento_solicitado not in INSTRUMENTOS_PERMITIDOS:
+            instrumento_solicitado = "US500"
+        
+        proyector_activo = getattr(self, "proyectores_multi", {}).get(instrumento_solicitado, self.proyector)
+        
+        solicitud = self._get_default_solicitud(instrumento_solicitado)
+        res_vista = proyector_activo.consultar(solicitud)
         if res_vista.exito:
             vista = res_vista.datos
             ui_state = deducir_estado_ui(vista)
@@ -128,8 +171,18 @@ class ManejadorServidorLoopback(http.server.BaseHTTPRequestHandler):
             self.send_error(500, "Error interno al consultar estado")
 
     def _handle_view_json(self) -> None:
-        solicitud = self._get_default_solicitud()
-        res_vista = self.proyector.consultar(solicitud)
+        params = self._parsear_query_params()
+        instrumento_solicitado = params.get("instrument", "US500")
+        
+        # Validar y seleccionar proyector
+        from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+        if instrumento_solicitado not in INSTRUMENTOS_PERMITIDOS:
+            instrumento_solicitado = "US500"
+        
+        proyector_activo = getattr(self, "proyectores_multi", {}).get(instrumento_solicitado, self.proyector)
+        
+        solicitud = self._get_default_solicitud(instrumento_solicitado)
+        res_vista = proyector_activo.consultar(solicitud)
         if res_vista.exito:
             vista = res_vista.datos
             view_data = {
@@ -225,32 +278,83 @@ class ManejadorServidorLoopback(http.server.BaseHTTPRequestHandler):
 
 
 class ServidorLoopback:
-    """Envoltorio del servidor HTTP vinculado exclusivamente a 127.0.0.1."""
+    """Envoltorio del servidor HTTP vinculado exclusivamente a 127.0.0.1.
+    
+    FASE 1: Soporte multi-activo - mantiene proyectores independientes por instrumento.
+    Cada instrumento (US500, XAUUSD, TSLA, AAPL) tiene su propio proyector y estado.
+    FASE 6: Integración con actualizador de datos en vivo para polling continuo.
+    """
 
     def __init__(
         self,
         host: str = "127.0.0.1",
         port: int = 8080,
-        proyector: ProyectorVistas | None = None,
+        proyectores: Dict[str, ProyectorVistas] | None = None,
+        habilitar_polling: bool = True,
+        intervalo_polling: float = 5.0,
     ) -> None:
         if host != "127.0.0.1":
             raise ValueError(f"El servidor sólo puede escuchar en loopback (127.0.0.1), no en {host}")
         self.host = host
         self.port = port
+        
+        # FASE 1: Inicializar proyectores por instrumento si no se proporcionan
+        if proyectores is None:
+            from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+            self.proyectores = {
+                inst: ProyectorVistas(inst) for inst in INSTRUMENTOS_PERMITIDOS
+            }
+        else:
+            self.proyectores = proyectores
+        
+        # Usar el proyector de US500 como default para compatibilidad backward
+        default_proyector = self.proyectores.get("US500") or next(iter(self.proyectores.values()))
+        
         # Una subclase local evita que dos servidores compartan accidentalmente el mismo proyector.
         handler_class = type(
             "ManejadorServidorLoopbackAislado",
             (ManejadorServidorLoopback,),
-            {"proyector": proyector or ProyectorVistas()},
+            {"proyector": default_proyector, "proyectores_multi": self.proyectores},
         )
         # ThreadingHTTPServer impide que una conexión especulativa/inactiva del navegador
         # bloquee todas las peticiones posteriores. El proyector protege sus snapshots
         # compartidos mediante RLock.
         self.httpd = ServidorHTTPConcurrente((host, port), handler_class)
+        
+        # FASE 6: Inicializar servicio de polling si está habilitado
+        self._actualizador = None
+        if habilitar_polling:
+            try:
+                from sistema_luces.sources.actualizador_multi_activo import crear_servicio_actualizacion
+                self._actualizador = crear_servicio_actualizacion(
+                    proyectores=self.proyectores,
+                    intervalo=intervalo_polling,
+                )
+                logger.info(f"Polling multi-activo configurado (intervalo={intervalo_polling}s)")
+            except ImportError as e:
+                logger.warning(f"No se pudo importar el actualizador: {e}. Polling deshabilitado.")
+    
+    def iniciar_polling(self) -> None:
+        """Inicia el servicio de polling de datos en vivo."""
+        if self._actualizador:
+            self._actualizador.iniciar()
+        else:
+            logger.warning("El actualizador no está disponible")
+    
+    def detener_polling(self) -> None:
+        """Detiene el servicio de polling."""
+        if self._actualizador:
+            self._actualizador.detener()
 
     def serve_forever(self) -> None:
-        self.httpd.serve_forever()
+        # Iniciar polling antes de servir
+        self.iniciar_polling()
+        try:
+            self.httpd.serve_forever()
+        finally:
+            self.detener_polling()
 
     def shutdown(self) -> None:
+        self.detener_polling()
         self.httpd.shutdown()
         self.httpd.server_close()

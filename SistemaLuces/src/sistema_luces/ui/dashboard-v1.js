@@ -12,6 +12,11 @@
         RED: { color: "ROJO", direction: "CORTO", css: "#ef4444" },
     };
 
+    // FASE 1: Soporte multi-activo - leer instrumento de URL o default US500
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentInstrument = urlParams.get("instrument") || "US500";
+    const statusEndpoint = `/v1/status?instrument=${encodeURIComponent(currentInstrument)}`;
+
     let timerId = null;
     let requestRunning = false;
     let consecutiveFailures = 0;
@@ -67,7 +72,7 @@
         }
         const values = Array.isArray(reasons) && reasons.length > 0
             ? reasons.map(String)
-            : [uiState === "vacio" ? "NO_DATA_YELLOW (Sin eventos procesados)" : "Sin códigos de razón activos"];
+            : [uiState === "vacio" ? "NO_DATA_YELLOW (Sin eventos procesados)" : "Sin codigos de razon activos"];
         const fragment = document.createDocumentFragment();
         values.forEach((value) => {
             const item = document.createElement("li");
@@ -83,7 +88,7 @@
         const detail = lightText[light];
 
         bindText("light-badge", light);
-        bindText("action-label", `${detail.color} · ${detail.direction}`);
+        bindText("action-label", `${detail.color} . ${detail.direction}`);
         bindText("canonical-direction", detail.direction);
 
         const action = document.querySelector('[data-bind="action-label"]');
@@ -136,7 +141,7 @@
         } else if (position <= red) {
             distance = `ROJO alcanzado por +${numberText(red - position, 1)} pp`;
         } else {
-            distance = `Faltan ${numberText(green - position, 1)} pp para VERDE · ${numberText(position - red, 1)} pp para ROJO`;
+            distance = `Faltan ${numberText(green - position, 1)} pp para VERDE . ${numberText(position - red, 1)} pp para ROJO`;
         }
 
         panel.hidden = false;
@@ -144,19 +149,19 @@
         progress.setAttribute("aria-valuenow", numberText(position, 1));
         progress.setAttribute("aria-valuetext", `${numberText(position, 1)} por ciento largo`);
         marker.style.left = `${position.toFixed(2)}%`;
-        bindText("diagnostic-summary", `${numberText(position, 1)}% LARGO · ${numberText(value.probability_short_pct, 1)}% CORTO`);
-        bindText("diagnostic-red", `ROJO ≤ ${numberText(red, 1)}%`);
-        bindText("diagnostic-green", `VERDE ≥ ${numberText(green, 1)}%`);
+        bindText("diagnostic-summary", `${numberText(position, 1)}% LARGO . ${numberText(value.probability_short_pct, 1)}% CORTO`);
+        bindText("diagnostic-red", `ROJO <= ${numberText(red, 1)}%`);
+        bindText("diagnostic-green", `VERDE >= ${numberText(green, 1)}%`);
         bindText("diagnostic-distance", distance);
         bindText(
             "diagnostic-meta",
-            `Umbral verde: ${numberText(green, 1)}% · Umbral rojo: ${numberText(red, 1)}% · Fuente de umbrales: ${String(value.threshold_source || "no especificada")} · Evento fuente: ${String(value.source_event_id || "N/A")}`,
+            `Umbral verde: ${numberText(green, 1)}% . Umbral rojo: ${numberText(red, 1)}% . Fuente de umbrales: ${String(value.threshold_source || "no especificada")} . Evento fuente: ${String(value.source_event_id || "N/A")}`,
         );
 
         const showSafety = ["obsoleto", "error", "conflicto"].includes(uiState);
         safety.hidden = !showSafety;
         safety.textContent = showSafety
-            ? `La barra describe la señal base; la salida operativa permanece AMARILLO por seguridad (${uiState}).`
+            ? `La barra describe la senal base; la salida operativa permanece AMARILLO por seguridad (${uiState}).`
             : "";
     }
 
@@ -168,12 +173,12 @@
         const state = marketStateText(market.market_state);
         const price = finite(market.last_price) ? market.last_price : data.mid_price;
 
-        bindText("market-source", `${provider} · ${symbol}`);
+        bindText("market-source", `${provider} . ${symbol}`);
         bindText("market-last", metricText(price, currency));
         bindText("market-previous", metricText(market.previous_close, currency));
         bindText("market-open", metricText(market.day_open, currency));
         bindText("market-high-low", `${metricText(market.day_high, currency)} / ${metricText(market.day_low, currency)}`);
-        bindText("market-change", `${metricText(market.change, "pts")} · ${metricText(market.change_pct, "%")}`);
+        bindText("market-change", `${metricText(market.change, "pts")} . ${metricText(market.change_pct, "%")}`);
         bindText("market-volume", metricText(market.day_volume, "", 0));
         bindText("market-state", state);
         bindText("source-timestamp", String(market.source_timestamp_utc || "N/A"));
@@ -186,11 +191,11 @@
         bindText("bid-ask", `${metricText(data.bid)} / ${metricText(data.ask)}`);
 
         if (Object.keys(market).length > 0) {
-            bindText("top-quote-label", `S&P 500 · ${provider}`);
+            bindText("top-quote-label", `${data.instrument || "US500"} . ${provider}`);
             bindText("top-quote-value", metricText(price, currency));
-            bindText("top-quote-detail", `${symbol} · ${state}`);
+            bindText("top-quote-detail", `${symbol} . ${state}`);
         } else {
-            bindText("top-quote-label", "US500 Cotización");
+            bindText("top-quote-label", `${data.instrument || "US500"} Cotizacion`);
             bindText("top-quote-value", `${metricText(data.bid, "USD")} / ${metricText(data.ask, "USD")}`);
             bindText("top-quote-detail", `Spread: ${metricText(data.spread, "pts")}`);
         }
@@ -228,11 +233,11 @@
             const currency = String(asset.currency || "USD");
             set("last-price", metricText(asset.last_price, currency));
             set("previous-close", metricText(asset.previous_close, currency));
-            set("change", `${metricText(asset.change, "pts")} · ${metricText(asset.change_pct, "%")}`);
+            set("change", `${metricText(asset.change, "pts")} . ${metricText(asset.change_pct, "%")}`);
             set("market-state", asset.market_state === "REGULAR" ? "ABIERTO" : (asset.market_state === "CLOSED" ? "CERRADO" : "DESCONOCIDO"));
             set("source-time", String(asset.source_timestamp_utc || "N/A"));
             set("data-age", metricText(asset.data_age_ms, "ms", 0));
-            set("transport-status", `${String(asset.transport || "N/A")} · ${String(asset.quote_status || "N/A")}`);
+            set("transport-status", `${String(asset.transport || "N/A")} . ${String(asset.quote_status || "N/A")}`);
             const diagnostic = asset.diagnostico_semaforo;
             if (diagnosticPanel && diagnosticEmpty && diagnosticMarker && diagnosticSummary && validDiagnostic(diagnostic)) {
                 const position = Math.max(0, Math.min(100, diagnostic.probability_long_pct));
@@ -240,7 +245,7 @@
                 diagnosticEmpty.hidden = true;
                 diagnosticPanel.setAttribute("aria-valuenow", numberText(position, 1));
                 diagnosticMarker.style.left = `${position.toFixed(2)}%`;
-                diagnosticSummary.textContent = `${numberText(position, 1)}% · R≤${numberText(diagnostic.threshold_red_pct, 1)} · V≥${numberText(diagnostic.threshold_green_pct, 1)}`;
+                diagnosticSummary.textContent = `${numberText(position, 1)}% . R<=${numberText(diagnostic.threshold_red_pct, 1)} . V>=${numberText(diagnostic.threshold_green_pct, 1)}`;
             } else if (diagnosticPanel && diagnosticEmpty) {
                 diagnosticPanel.hidden = true;
                 diagnosticEmpty.hidden = false;
@@ -287,7 +292,7 @@
         const controller = new AbortController();
         const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
         try {
-            const response = await fetch("/v1/status", {
+            const response = await fetch(statusEndpoint, {
                 cache: "no-store",
                 headers: { Accept: "application/json" },
                 signal: controller.signal,
@@ -297,14 +302,14 @@
             }
             const data = await response.json();
             if (!data || typeof data !== "object") {
-                throw new Error("Respuesta de estado inválida");
+                throw new Error("Respuesta de estado invalida");
             }
             consecutiveFailures = 0;
             window.requestAnimationFrame(() => applyStatus(data));
-            updateConnection("connected", "Actualización incremental conectada.");
+            updateConnection("connected", "Actualizacion incremental conectada.");
         } catch (_error) {
             consecutiveFailures += 1;
-            updateConnection("retrying", "Actualización interrumpida; se conserva el último dato verificado y se reintentará.");
+            updateConnection("retrying", "Actualizacion interrumpida; se conserva el ultimo dato verificado y se reintentara.");
         } finally {
             window.clearTimeout(timeoutId);
             requestRunning = false;
