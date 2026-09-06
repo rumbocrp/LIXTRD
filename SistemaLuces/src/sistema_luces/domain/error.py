@@ -25,6 +25,7 @@ CodigoErrorDominio = Literal[
     "RECONCILIATION_FAILED",
     "NOT_FOUND",
     "INTERNAL_ERROR",
+    "SOURCE_DATA_INVALID",
 ]
 
 CODIGOS_ERROR_PERMITIDOS: frozenset[str] = frozenset(
@@ -50,6 +51,7 @@ CODIGOS_ERROR_PERMITIDOS: frozenset[str] = frozenset(
         "RECONCILIATION_FAILED",
         "NOT_FOUND",
         "INTERNAL_ERROR",
+        "SOURCE_DATA_INVALID",
     }
 )
 
