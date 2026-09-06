@@ -239,9 +239,14 @@ class MonitorYahooSP500:
 
 
 async def _main_async(args: argparse.Namespace) -> None:
-    proyector = ProyectorVistas()
+    # FASE 1: Crear proyectores multi-activo
+    from sistema_luces.config.multi_asset_config import INSTRUMENTOS_PERMITIDOS
+    proyectores = {
+        inst: ProyectorVistas(inst) for inst in INSTRUMENTOS_PERMITIDOS
+    }
+    
     monitor = MonitorYahooSP500(
-        proyector,
+        proyectores["US500"],  # Usar proyector de US500 para ^GSPC
         rest_open_seconds=args.rest_open_seconds,
         rest_closed_seconds=args.rest_closed_seconds,
         timeout_seconds=args.timeout_seconds,
@@ -253,7 +258,7 @@ async def _main_async(args: argparse.Namespace) -> None:
     print("WebSocket primario + REST 1m de respaldo; el proceso continúa 24/7 hasta Ctrl+C.", flush=True)
     await monitor.refrescar_rest()
 
-    server = ServidorLoopback(host="127.0.0.1", port=args.port, proyector=proyector)
+    server = ServidorLoopback(host="127.0.0.1", port=args.port, proyectores=proyectores)
     server_thread = threading.Thread(target=server.serve_forever, daemon=True, name="http-loopback")
     server_thread.start()
     print(f"Panel: http://127.0.0.1:{args.port}/", flush=True)
